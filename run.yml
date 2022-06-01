@@ -1,0 +1,28 @@
+---
+- name: Install dotfiles and some other basics
+  hosts: localhost
+  connection: local
+
+  tasks:
+    - name: Install base packages
+      become: yes
+      yum:
+        name:
+          - wget
+          - firefox
+          - patch
+          - bat
+        state: present
+
+    # These should probably always install.
+    - import_role:
+        name: packer-dev
+    - import_role:
+        name: qemu
+    - import_role:
+        name: rpm-dev
+    - import_role:
+        name: spotify
+    # Because sometimes the GPU Kitty just doesn't work.
+    - import_role:
+        name: gnome-terminal
