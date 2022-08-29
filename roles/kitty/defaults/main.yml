@@ -1,0 +1,5 @@
+---
+# Choose the catppuccin theme to use for kitty
+# Basically whatever the files are named:
+#     frappe latte macchiato mocha
+kitty_theme: macchiato

@@ -1,0 +1,30 @@
+---
+
+- name: install kitty
+  become: yes
+  yum:
+    name: kitty
+    state: present
+
+- name: Ensure kitty theme dir exists
+  file:
+    path: '{{ ansible_env.HOME }}/.config/kitty/themes'
+    state: directory
+    mode: 0755
+
+- name: Ensure all catppuccin themes exist
+  get_url:
+    url: https://raw.githubusercontent.com/catppuccin/kitty/main/{{ item }}
+    dest: "{{ ansible_env.HOME }}/.config/kitty/themes/"
+    mode: 0755
+  loop:
+    - frappe.conf
+    - latte.conf
+    - macchiato.conf
+    - mocha.conf
+
+- name: Ensure kitty.conf exists
+  template:
+    src: kitty.conf.j2
+    dest: "{{ ansible_env.HOME }}/.config/kitty/kitty.conf"
+    mode: 0755

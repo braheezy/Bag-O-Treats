@@ -1,0 +1,37 @@
+---
+
+- name: Download cursor source
+  get_url:
+    url: https://github.com/catppuccin/cursors/archive/refs/heads/main.zip
+    dest: /tmp
+
+- name: Unpack cursor source
+  unarchive:
+    src: /tmp/cursors-main.zip
+    dest: /tmp/
+    remote_src: yes
+
+- name: Record all cursor zip files
+  find:
+    paths: /tmp/cursors-main/cursors
+    patterns: "*.zip"
+  register: cursor_zips
+
+- name: Unpack all cursors
+  become: yes
+  unarchive:
+    src: "{{ item.path }}"
+    dest: /usr/share/icons
+    remote_src: yes
+  loop: "{{ cursor_zips.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: Configure a default cursor in settings
+  dconf:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  loop:
+    - { key: "/org/gnome/desktop/interface/cursor-size", value: "32" }
+    - { key: "/org/gnome/desktop/interface/cursor-theme", value: "'Catppuccin-{{ cursor_color }}-Cursors'" }
